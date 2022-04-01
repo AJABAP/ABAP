@@ -1,0 +1,39 @@
+*&---------------------------------------------------------------------*
+*& Report za3q4
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za3q4.
+
+TYPES: BEGIN OF ts_vbak,
+         vbeln TYPE vbak-vbeln,
+         vbtyp TYPE vbak-vbtyp,
+         spart TYPE vbak-spart,
+       END OF ts_vbak.
+
+TYPES: BEGIN OF ts_vbap,
+         vbeln TYPE vbap-vbeln,
+         posnr TYPE vbap-posnr,
+         matnr TYPE vbap-matnr,
+       END OF ts_vbap.
+
+TYPES: BEGIN OF ty_final_output.
+    INCLUDE TYPE ts_vbak AS test RENAMING WITH SUFFIX _vbak.
+    INCLUDE TYPE ts_vbap AS test1 RENAMING WITH SUFFIX _vbap.
+TYPES : END OF ty_final_output.
+
+DATA: it_prefix TYPE TABLE OF ty_final_output.
+
+SELECT
+vbak~vbeln,
+vbak~vbtyp,
+vbak~spart,
+vbap~vbeln,
+vbap~posnr,
+vbap~matnr
+ INTO TABLE @it_prefix
+FROM vbak INNER JOIN vbap ON vbak~vbeln EQ vbap~vbeln.
+
+cl_demo_output=>display_data(
+  EXPORTING
+  value = it_prefix ).
