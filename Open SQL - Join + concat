@@ -1,0 +1,33 @@
+*&---------------------------------------------------------------------*
+*& Report za3q2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za3q2.
+
+*Display List of 50 Pos by fetching the data from EKKO table and MAKT with below fields using New OPEN SQL:
+*EKKO~EBELN
+*EKKO~EBELP
+*EKKO~MATNR
+*EKKO~BUKRS
+*EKKO~WERKS
+*MAKT~MAKTX
+*While displaying the data display the concatenation of MATNR and MAKTX in another field named ( Material_with_Description)
+
+SELECT e~EBELN,
+p~EBELP ,
+p~MATNR,
+e~BUKRS,
+p~WERKS,
+m~MAKTX,
+CONCAT_WITH_SPACE( p~matnr, m~maktX, 1 ) as ConCat
+from ekko as e left OUTER JOIN ekpo as p
+on e~ebeln EQ p~ebeln
+left OUTER JOIN makt as m
+on p~matnr EQ m~matnr
+
+into TABLE @data(it_main) up to 50 rows.
+
+cl_demo_output=>display_data(
+  EXPORTING
+  value = it_main ).
