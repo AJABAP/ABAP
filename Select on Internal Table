@@ -1,0 +1,14 @@
+REPORT za4q7.
+
+SELECT vbeln,
+       vbtyp,
+       vtweg FROM vbak
+       INTO TABLE @DATA(it_vbak) UP TO 100 ROWS.
+
+SELECT i~vbeln, i~vbtyp, p~matnr
+FROM @it_vbak AS i INNER JOIN vbap AS p
+ON i~vbeln = p~vbeln INTO TABLE @DATA(it_main).
+
+cl_demo_output=>display_data(
+  EXPORTING
+  value = it_main ).
