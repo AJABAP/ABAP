@@ -1,0 +1,34 @@
+*&---------------------------------------------------------------------*
+*& Report za3q1
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za3q1.
+
+*Display list of 50 materials having below fields from MARA
+*Table using New Open SQL:
+*MATNR(Material Number)
+*MTART(Material Type)
+*MATKL(Material Group)
+*MATERIAL_TYPE_DESCRIPTION( if ROH Then ‘RAW’, if HALB
+*Then ‘Semi finished’, if FERT then
+*‘FINISHED’
+*Note: Use Case and When Statement
+*Also, can take help of today’s session ( session no4 ) – same
+*example covered
+
+SELECT mara~matnr AS materialnumber,
+  mara~mtart AS materialtype,
+  mara~matkl AS materialgroup,
+  CASE
+  WHEN mara~mtart = 'ROH' THEN 'Raw'
+  WHEN mara~mtart = 'HALB' THEN 'Semi Finished'
+  WHEN mara~mtart = 'FERT' THEN 'Finished'
+  ELSE 'Others'
+  END AS materialtypedesc
+  FROM mara
+  INTO TABLE @DATA(it_mara) UP TO 50 ROWS.
+
+  cl_demo_output=>display_data(
+  EXPORTING
+  value = it_mara ).
