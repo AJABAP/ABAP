@@ -1,0 +1,21 @@
+*&---------------------------------------------------------------------*
+*& Report za3q3
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za3q3.
+
+SELECT SINGLE @abap_true FROM vbak
+INTO @DATA(lv_exist)
+WHERE
+vbeln = '10'.
+
+if lv_exist = abap_true.
+
+write : 'Sales order 10 Exists'.
+
+else.
+
+write : 'Sales order 10 does not Exists'.
+
+endif.
