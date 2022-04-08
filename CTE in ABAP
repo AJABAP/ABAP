@@ -1,0 +1,52 @@
+*&---------------------------------------------------------------------*
+*& Report za5q3
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za5q3.
+*Q3. Achieve below with the help of CTEs –
+*Step 1. Get Sales order detail – VBELN, VKORG, VTWEG, KUNNR from VBAK table=> ( say CTE is +VBAK )
+*Step 2. Get Customer Detail – KUNNR, LAND1, NAME1 for KUNNR which are present in +VBAK => ( Say this CTE is + KNA1 )
+*Step3. Get all the Sales order Line Item Details(VBELN, VBELP, MATNR) from VBAP for all Sales order(VBELN) which are present in +VBAK => ( Say this CTE is +VBAP )
+*Step 4. Get MATNR, MAKTX from MAKT for all the Material fetched in +VBAP( Say this CTE is +MAKT ).
+*Step5. Get the final data as +VBAK~VBELN, +VBAK~VKORG, +VBAP~EBELP, +VBAP~MATNR, +MAKT~MAKTX, +KNA1~KUNNR and Display
+*VBAP~`MATNR
+
+
+WITH +vbak AS ( SELECT vbeln,
+                       vkorg,
+                       vtweg,
+                       kunnr FROM vbak where vkorg = '1010' ) ,
+     +kna1 AS ( SELECT k~kunnr,
+                       land1,
+                       name1 FROM kna1 AS k INNER JOIN +vbak ON k~kunnr = +vbak~kunnr ),
+     +vbap AS ( SELECT v~vbeln,
+                       posnr,
+                       matnr FROM vbap AS v INNER JOIN +vbak ON v~vbeln = +vbak~vbeln ),
+     +makt AS ( SELECT m~matnr,
+                       maktx FROM makt AS m INNER JOIN +vbap ON m~matnr = +vbap~matnr ),
+     +main( salesorder, salesorg, salesitem, material, materialdesc, customer ) AS
+
+      ( SELECT  a~vbeln,
+                a~vkorg,
+                c~posnr,
+                c~matnr,
+                d~maktx,
+                b~kunnr
+
+                FROM +vbak AS a
+                 INNER JOIN +kna1 AS b
+                 ON a~kunnr = b~kunnr
+                 INNER JOIN +vbap AS c
+                 ON c~vbeln = a~vbeln
+                 INNER JOIN +makt AS d
+                 ON c~matnr = d~matnr )
+
+       SELECT * FROM +main INTO TABLE @DATA(it_main).
+
+
+cl_demo_output=>display_data(
+  EXPORTING
+    value = it_main
+*    name =
+).
