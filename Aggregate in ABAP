@@ -1,0 +1,20 @@
+*&---------------------------------------------------------------------*
+*& Report za6q1
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT za6q1.
+
+SELECT MAX( netpr ) AS highest,
+       MIN( netpr ) AS lowest,
+       AVG( netpr ) AS average,
+       SUM( netpr ) AS total,
+       count( * ) as number
+       FROM vbap
+       INTO TABLE @DATA(it_main).
+
+
+
+cl_demo_output=>display_data(
+EXPORTING
+value = it_main ).
