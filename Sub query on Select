@@ -1,0 +1,23 @@
+REPORT za4q2p2.
+
+*Fetch EBELN, BUKRS, BSTYP from EKKO and put into and internal table (say IT_EKKO)
+*•   Fetch EBELN, EBELP, MATNR form EKPO for only those EBELN which are present in
+*IT_EKKO where BUKRS = 1010 And Display the data
+
+SELECT ebeln,
+       bukrs,
+       bstyp
+  FROM ekko
+  INTO TABLE @DATA(it_ekko).
+
+SELECT ekpo~ebeln,
+       ekpo~ebelp,
+       ekpo~matnr
+  FROM ekpo WHERE ekpo~ebeln IN ( SELECT ebeln FROM @it_ekko AS k WHERE k~bukrs = '1010' )
+  INTO TABLE @DATA(it_ekpo).
+
+if sy-subrc = 0.
+cl_demo_output=>display_data(
+EXPORTING
+value = it_ekpo ).
+endif.
